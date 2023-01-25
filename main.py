@@ -39,11 +39,7 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.btnSecondAnswer.clicked.connect(lambda: next(gen))
         self.btnThirdAnswer.clicked.connect(lambda: next(gen))
         self.btnFourAnswer.clicked.connect(lambda: next(gen))
-        while True:
-            try:
-                next(gen)
-            except StopIteration as ex:
-                print(repr(ex))
+
 
     def add_test(self):
         ...
