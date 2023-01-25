@@ -1,0 +1,22 @@
+{ "response":
+    [
+        {
+            "question": 0,
+            "text": "",
+            "answers": [
+                {
+                    "answer": "", "mass": false
+                },
+                {
+                    "answer": "", "mass": false
+                },
+                {
+                    "answer": "", "mass": false
+                },
+                {
+                    "answer": "", "mass": false
+                }
+            ]
+        }
+    ]
+}

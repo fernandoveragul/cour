@@ -1,0 +1,40 @@
+{ "response":
+    [
+        {
+            "question": 10,
+            "text": "some text",
+            "answers": [
+                {
+                    "answer": "0", "mass": false
+                },
+                {
+                    "answer": "1", "mass": false
+                },
+                {
+                    "answer": "2", "mass": false
+                },
+                {
+                    "answer": "3", "mass": true
+                }
+            ]
+        },
+        {
+            "question": 11,
+            "text": "text",
+            "answers": [
+                {
+                    "answer": "0", "mass": false
+                },
+                {
+                    "answer": "1", "mass": false
+                },
+                {
+                    "answer": "2", "mass": false
+                },
+                {
+                    "answer": "3", "mass": true
+                }
+            ]
+        }
+    ]
+}
