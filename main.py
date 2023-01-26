@@ -59,8 +59,6 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
                     self.count_answers.append(data.get("answers")[3].get("mass"))
                     self.btnFourAnswer.setChecked(False)
 
-
-
     def __message_with_results(self, answers: list[bool]):
         msg = QtWidgets.QMessageBox(self)
         msg.setWindowTitle("Поздравляю!")
