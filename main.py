@@ -3,15 +3,15 @@ import sys
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QPushButton
 
-from dependencies.get_test import get_json_tests_to_python, get_filtered_list_files, get_test, get_path, \
-    post_python_to_json_test
-from dependencies.work_with_data import gen_q, open_test_text
+from dependencies.get_test import get_json_tests_to_python, get_filtered_list_files, post_python_to_json_test
+from dependencies.work_with_data import gen_q, open_test_text, filtered_answers, load_default_test
 from display import mainWindow, testsWindow
 
 
 class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
-    def __init__(self, read_data: dict):
+    def __init__(self, read_data: dict, user_data: tuple):
         super().__init__()
+        self.user_data = user_data
         self.setupUi(self)
         self.setWindowTitle("Текущий тест")
 
@@ -23,19 +23,19 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
                                       self.btnFourAnswer]
         gen = open_test_text(label=self.lblTextQuestion, buttons=buttons, data=questions)
 
-        self.is_end(read_data.get("response")[0], buttons)
+        self.is_end(next(gen))
 
         self.lblTextQuestion.setText(read_data.get("response")[0].get("text"))
         for ind, btn in enumerate(buttons):
             btn.setCheckable(True)
             btn.setText(read_data.get("response")[0].get("answers")[ind].get("answer"))
 
-        self.btnFirstAnswer.clicked.connect(lambda: self.is_end(next(gen, False), buttons))
-        self.btnSecondAnswer.clicked.connect(lambda: self.is_end(next(gen, False), buttons))
-        self.btnThirdAnswer.clicked.connect(lambda: self.is_end(next(gen, False), buttons))
-        self.btnFourAnswer.clicked.connect(lambda: self.is_end(next(gen, False), buttons))
+        self.btnFirstAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
+        self.btnSecondAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
+        self.btnThirdAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
+        self.btnFourAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
 
-    def is_end(self, data: bool | dict, buttons: list[QPushButton]):
+    def is_end(self, data: bool | dict):
         self.count_gen_iter.append(0 if data is False else None)
         print(data, self.count_gen_iter.count(None))
         match data:
@@ -59,11 +59,13 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
                     self.count_answers.append(data.get("answers")[3].get("mass"))
                     self.btnFourAnswer.setChecked(False)
 
+
+
     def __message_with_results(self, answers: list[bool]):
         msg = QtWidgets.QMessageBox(self)
         msg.setWindowTitle("Поздравляю!")
         msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
-        msg.setText(f"Количество ваших баллов равно: {sum(answers)}")
+        msg.setText(f"{self.user_data[0]} {self.user_data[-1]}, количество ваших баллов равно: {sum(answers)}")
         btn_continue = msg.addButton("Продолжить выполнять тесты", QtWidgets.QMessageBox.ButtonRole.NoRole)
         msg.setDefaultButton(btn_continue)
         msg.exec()
@@ -77,11 +79,11 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.count_answers: list[bool] = []
         self.questions: dict = {}
 
-        self.__auth_data = None
         self.__user_info = None
-        self._tmp = self.__load_default_test()
+        self._tmp = load_default_test()
         self._tmp_count = 0
-        self.stackedWidget.setCurrentIndex(2)
+
+        self.stackedWidget.setCurrentIndex(0)
         self.btnSugnUp.clicked.connect(lambda: self.__login())
 
         self.btnGoBack.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
@@ -100,14 +102,17 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             self.verticalLayout_3.addWidget(btn_)
 
     def __open_test(self, read_data: dict):
-        self.tests_window = Tests(read_data=read_data)
+        self.tests_window = Tests(read_data=read_data, user_data=self.__user_info)
         self.tests_window.show()
 
     def __login(self):
         lg, ps = [self.ledtLogin.text(), self.ledtPassword.text()]
+        self.ledtLogin.setText("")
+        self.ledtPassword.setText("")
+        if lg == "" and ps == "":
+            ps, lg = "user", "user"
+            self.__user_info = lg, ps
         if f'{lg}' == f'{ps[::-1]}':
-            self.ledtLogin.setText("")
-            self.ledtPassword.setText("")
             self.stackedWidget.setCurrentIndex(2)
         else:
             self.stackedWidget.setCurrentIndex(1)
@@ -115,10 +120,8 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
     def __add_to_test(self, default_data: dict[str, list], count_q: int = 0):
         dt = default_data.get("response")
         q = {
-            "question": count_q
-        }, {
-            "text": self.ledtTextQuestion.text()
-        }, {
+            "question": count_q,
+            "text": self.ledtTextQuestion.text(),
             "answers": [
                 {"answer": self.ledtAnswerFirst.text(), "mass": self.rbtnFirstTrue.isChecked()},
                 {"answer": self.ledtAnswerSecond.text(), "mass": self.rbtnSecondTrue.isChecked()},
@@ -126,28 +129,43 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
                 {"answer": self.ledtAnswerFour.text(), "mass": self.rbtnFourTrue.isChecked()}
             ]
         }
-        dt.append(q)
+        dt_ = dt + [q]
         count_q += 1
-        default_data.update({"response": dt})
+        default_data.update({"response": dt_})
         self._tmp = default_data
         self._tmp_count = count_q
-
-    def __load_default_test(self):
-        path_from_read: str = get_path("display/origin_files")
-        return get_test(f'{path_from_read}origin_schema.json')
+        print(self._tmp)
+        self.__clear_admin_interface()
+        print(dict(self._tmp.get("response")[-1]), type(self._tmp))
+        QtWidgets.QMessageBox.information(self, "Важная информация",
+                                          f'Вопрос: {self._tmp.get("response")[-1].get("text")}\n'
+                                          f'Ответ: {filtered_answers(self._tmp.get("response")[-1].get("answers"))}')
 
     def create_test(self, write_data):
         post_python_to_json_test(write_data=write_data, number_var=self.ledtVarNumber.text())
+        QtWidgets.QMessageBox.information(self, "Успех", f"Был создан тест {get_filtered_list_files()[-1]}")
+        self.__clear_admin_interface()
+        self._tmp = load_default_test()
+        self._tmp_count = 0
+        self.stackedWidget.setCurrentIndex(0)
+
+    def __clear_admin_interface(self):
         self.ledtTextQuestion.setText("")
         self.ledtAnswerFirst.setText("")
         self.ledtAnswerSecond.setText("")
         self.ledtAnswerThird.setText("")
         self.ledtAnswerFour.setText("")
         self.ledtVarNumber.setText("")
-        self.stackedWidget.setCurrentIndex(0)
 
-    def get_name_executor(self):
-        ...
+    def __add_placeholders(self):
+        self.ledtLogin.setPlaceholderText("Введите имя")
+        self.ledtPassword.setPlaceholderText("Введите фамилию")
+        self.ledtVarNumber.setPlaceholderText("Введите номер варианта (может быть автоматическим)")
+        self.ledtAnswerFirst.setPlaceholderText("Введите первый ответ")
+        self.ledtAnswerSecond.setPlaceholderText("Введите второй ответ")
+        self.ledtAnswerThird.setPlaceholderText("Введите третий ответ")
+        self.ledtAnswerFour.setPlaceholderText("Введите четвёртый ответ")
+        self.ledtTextQuestion.setPlaceholderText("Введите текст вопроса")
 
 
 if __name__ == '__main__':
