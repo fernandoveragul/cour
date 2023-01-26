@@ -32,30 +32,30 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="btnFirsAnswer">
+    <widget class="QPushButton" name="btnFirstAnswer">
      <property name="text">
-      <string/>
+      <string>НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="btnSecondAnswer">
      <property name="text">
-      <string/>
+      <string>НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="btnThirdAnswer">
      <property name="text">
-      <string/>
+      <string>НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="btnFourAnswer">
      <property name="text">
-      <string/>
+      <string>НАЖМИТЕ, ЧТОБЫ НАЧАТЬ</string>
      </property>
     </widget>
    </item>
