@@ -24,5 +24,5 @@ def filtered_answers(d: list[dict]):
 
 
 def load_default_test():
-    path_from_read: str = get_path("display/origin_files")
+    path_from_read: str = get_path("display\\origin_files")
     return get_test(f'{path_from_read}origin_schema.json')
