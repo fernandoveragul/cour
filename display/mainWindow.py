@@ -117,13 +117,25 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Тестирование"))
         self.btnSugnUp.setText(_translate("MainWindow", "ВЕРИФИЦИРОВАТЬСЯ"))
+        self.tboxInstruction.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:\'Cantarell\'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:150%;\"><span style=\" font-family:\'Consolas\'; font-size:14pt; color:#000000;\">    Вам предстоит пройти тест(ы). В самом начале вам потребуется ввести своё имя и фамилию, если этого не будет сделано, программа подставит в поля стандартные значения. По окончанию каждого теста приложение сообщит вам результаты во всплывающем окне, после чего выполнение текущего теста закончится. Будьте внимательны, ведь вернуться к предыдущим вопросам нельзя. Внимательно читайте задания и будьте готовы к неудачам. Но не забывайте, что тесты, зачёты, экзамены это просто ещё один жизненный этап, который может быть, как удачным, так и неудачным, но всегда стоит держать голову высоко, а взгляд ещё выше. Именно там ваше будущее, удачи! </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:150%;\"> </p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:150%;\"> </p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; line-height:150%;\"> </p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"></p></body></html>"))
         self.btnGoBack.setText(_translate("MainWindow", "ВЕРНУТЬСЯ"))
         self.btnAccept.setText(_translate("MainWindow", "ПОНЯТНО"))
         self.rbtnFirstTrue.setText(_translate("MainWindow", "ВЕРНЫЙ"))
