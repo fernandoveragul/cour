@@ -3,7 +3,7 @@
 * Инициализировать виртуальное окружение ```python -m venv env```
 * Активироавть виртульное окружение ```source env/bin/activate``` для *nix ```env\Scripts\activate``` для Windows
 * Установить зависимости ```pip install -r requirements.txt```
-* Запустить сборку 
+* Запустить сборку (пример сборки для Windows)
 ```command=bash
 mkdir compile && cd compile && pyinstaller -w -D ..\main.py && cd ..
 ```
