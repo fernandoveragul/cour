@@ -78,10 +78,11 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.setWindowTitle("Тестирование")
         self.count_answers: list[bool] = []
         self.questions: dict = {}
-
         self.__user_info = None
         self._tmp = load_default_test()
         self._tmp_count = 0
+
+        self.__add_placeholders()
 
         self.stackedWidget.setCurrentIndex(0)
         self.btnSugnUp.clicked.connect(lambda: self.__login())
