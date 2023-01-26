@@ -5,7 +5,7 @@ import json
 
 def get_filtered_list_files() -> list[str]:
     files: list[str] = os.listdir(f'{os.path.dirname(sys.argv[0])}/tests/')
-    print(files)
+    # print(files)
     return list(map(lambda file: file.split(".")[0].replace("_", " "), files))
 
 
