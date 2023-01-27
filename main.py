@@ -30,23 +30,26 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
         self.btnThirdAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
         self.btnFourAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
 
-    def is_end(self, gen: Generator, buttons: list[QPushButton], lbl: QLabel = None):
+    def is_end(self, gen: Generator, buttons: list[QPushButton]):
         _tmp_ = [btn.setCheckable(True) for btn in buttons]
         _tmp = any([btn.isChecked() for btn in buttons])
         _ind_ = [btn.text() for btn in buttons if btn.isChecked()]
 
         dt = next(gen, False)
         if dt is False:
+            self.__count_balls(self.answers[1:], self.read_data["response"])
             self.__message_with_results(self.count_answers)
-            self.__count_balls(self.answers, self.re)
             self.close()
         else:
             self.answers.append(_ind_)
         _tmp_ = [btn.setCheckable(False) for btn in buttons if btn.isChecked()]
 
-    def __count_balls(self, answers: list):
-
-        ...
+    def __count_balls(self, answers: list, read_data: list[dict]):
+        for ind, ans in enumerate(answers):
+            for _, v in read_data[ind].items():
+                if isinstance(v, list):
+                    for i in v:
+                        self.count_answers.append(i.get("mass") if i.get("answer") == ans[0] else False)
 
     def __message_with_results(self, answers: list[bool]):
         msg = QtWidgets.QMessageBox(self)
