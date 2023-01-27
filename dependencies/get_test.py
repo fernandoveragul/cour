@@ -8,7 +8,7 @@ def get_filtered_list_files() -> list[str]:
     return list(map(lambda file: file.split(".")[0].replace("_", " "), files))[1:]
 
 
-def get_test(path_file: str) -> dict[str, list[dict[str, int | str | list[str, bool]]]]:
+def get_test(path_file: str) -> dict[str, list[dict[str, int | str | list[str, bool | str]]]]:
     with open(path_file, "r") as test:
         test_json: dict = json.loads(test.read())
     return test_json
