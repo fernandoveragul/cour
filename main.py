@@ -31,8 +31,7 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
         self.btnFourAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
 
     def is_end(self, gen: Generator, buttons: list[QPushButton]):
-        _tmp_ = [btn.setCheckable(True) for btn in buttons]
-        _tmp = any([btn.isChecked() for btn in buttons])
+        _tmp_ = any([btn.isChecked() for btn in buttons])
         _ind_ = [btn.text() for btn in buttons if btn.isChecked()]
 
         dt = next(gen, False)
@@ -43,6 +42,7 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
         else:
             self.answers.append(_ind_)
         _tmp_ = [btn.setCheckable(False) for btn in buttons if btn.isChecked()]
+        _tmp_ = [btn.setCheckable(True) for btn in buttons if not btn.isChecked()]
 
     def __count_balls(self, answers: list, read_data: list[dict]):
         for ind, ans in enumerate(answers):
@@ -59,7 +59,6 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
         btn_continue = msg.addButton("Продолжить выполнять тесты", QtWidgets.QMessageBox.ButtonRole.NoRole)
         msg.setDefaultButton(btn_continue)
         msg.exec()
-        print(self.answers)
 
 
 class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
@@ -96,6 +95,7 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.questions = get_json_tests_to_python(path_to_questions)
         self.tests_window = Tests(read_data=self.questions, user_data=self.__user_info)
         self.tests_window.show()
+        self.tests_window = None
 
     def __login(self):
         lg, ps = [self.ledtLogin.text(), self.ledtPassword.text()]
@@ -111,10 +111,6 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
 
     def __add_to_test(self, default_data: dict[str, list], count_q: int = 0):
         dt = default_data.get("response")
-        print(self.rbtnFirstTrue.isChecked(), self.rbtnSecondTrue.isChecked(),
-              self.rbtnThirdTrue.isChecked(), self.rbtnFourTrue.isChecked())
-        print(self.ledtAnswerFirst.text(), self.ledtAnswerSecond.text(),
-              self.ledtAnswerThird.text(), self.ledtAnswerFour.text())
         q = {
             "question": count_q,
             "text": self.ledtTextQuestion.text(),
