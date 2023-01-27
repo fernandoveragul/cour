@@ -37,7 +37,6 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
 
     def is_end(self, data: bool | dict):
         self.count_gen_iter.append(0 if data is False else None)
-        print(data, self.count_gen_iter.count(None))
         match data:
             case False:
                 self.__message_with_results(self.count_answers)
@@ -91,17 +90,20 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.btnAddQ.clicked.connect(lambda: self.__add_to_test(self._tmp, self._tmp_count))
         self.btnFinish.clicked.connect(lambda: self.create_test(self._tmp))
 
-        for btn in get_filtered_list_files():
+        for ind, btn in enumerate(get_filtered_list_files()):
+            print(btn)
             btn_: QPushButton = QtWidgets.QPushButton()
             btn_.setText(btn.upper())
-            btn_.setObjectName(f"BTN_{btn.upper().replace(' ', '_')}")
-            path_to_questions = f'{btn.replace(" ", "_")}'
-            self.questions = get_json_tests_to_python(path_to_questions)
-            btn_.clicked.connect(lambda: self.__open_test(self.questions))
+            btn_.setObjectName(f"BTN_{btn.split()[-1]}")
+            btn_.clicked.connect(lambda ch, bt=btn: self.__open_test(bt))  # self.__open_test(self.questions)
             self.verticalLayout_3.addWidget(btn_)
 
-    def __open_test(self, read_data: dict):
-        self.tests_window = Tests(read_data=read_data, user_data=self.__user_info)
+        # for ind, q in self.questions :=
+
+    def __open_test(self, btn: str):
+        path_to_questions = f'{btn.replace(" ", "_")}'
+        self.questions = get_json_tests_to_python(path_to_questions)
+        self.tests_window = Tests(read_data=self.questions, user_data=self.__user_info)
         self.tests_window.show()
 
     def __login(self):
@@ -133,9 +135,7 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         default_data.update({"response": dt_})
         self._tmp = default_data
         self._tmp_count = count_q
-        print(self._tmp)
         self.__clear_admin_interface()
-        print(dict(self._tmp.get("response")[-1]), type(self._tmp))
         QtWidgets.QMessageBox.information(self, "Важная информация",
                                           f'Вопрос: {self._tmp.get("response")[-1].get("text")}\n'
                                           f'Ответ: {filtered_answers(self._tmp.get("response")[-1].get("answers"))}')
