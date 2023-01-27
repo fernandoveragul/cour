@@ -4,8 +4,7 @@ import json
 
 
 def get_filtered_list_files() -> list[str]:
-    files: list[str] = os.listdir(f'{os.path.dirname(sys.argv[0])}/tests/')
-    # print(files)
+    files: list[str] = os.listdir(f'{os.path.dirname(sys.argv[0])}\\test\\')
     return list(map(lambda file: file.split(".")[0].replace("_", " "), files))[1:]
 
 
@@ -24,7 +23,7 @@ def get_last_test_name() -> str:
 
 
 def get_path(path: str) -> str:
-    return f"{os.path.dirname(sys.argv[0])}/{path}/"
+    return f"{os.path.dirname(sys.argv[0])}\\{path}\\"
 
 
 def get_json_tests_to_python(file_name: str) -> dict | None:
