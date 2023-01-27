@@ -1,7 +1,8 @@
 import sys
+from typing import Generator
 
 from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtWidgets import QPushButton, QLabel
 
 from dependencies.get_test import get_json_tests_to_python, get_filtered_list_files, post_python_to_json_test
 from dependencies.work_with_data import gen_q, open_test_text, filtered_answers, load_default_test
@@ -11,52 +12,41 @@ from display import mainWindow, testsWindow
 class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
     def __init__(self, read_data: dict, user_data: tuple):
         super().__init__()
+        self.read_data = read_data
         self.user_data = user_data
         self.setupUi(self)
         self.setWindowTitle("Текущий тест")
 
         self.count_answers: list = []
-        self.count_gen_iter: list = []
+        self.answers: list = []
 
-        questions: list[dict] = list(gen_q(read_data["response"]))
+        questions: list[dict] = list(gen_q(self.read_data["response"]))
         buttons: list[QPushButton] = [self.btnFirstAnswer, self.btnSecondAnswer, self.btnThirdAnswer,
                                       self.btnFourAnswer]
         gen = open_test_text(label=self.lblTextQuestion, buttons=buttons, data=questions)
 
-        self.is_end(next(gen))
+        self.btnFirstAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
+        self.btnSecondAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
+        self.btnThirdAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
+        self.btnFourAnswer.clicked.connect(lambda ch: self.is_end(gen, buttons))
 
-        self.lblTextQuestion.setText(read_data.get("response")[0].get("text"))
-        for ind, btn in enumerate(buttons):
-            btn.setCheckable(True)
-            btn.setText(read_data.get("response")[0].get("answers")[ind].get("answer"))
+    def is_end(self, gen: Generator, buttons: list[QPushButton], lbl: QLabel = None):
+        _tmp_ = [btn.setCheckable(True) for btn in buttons]
+        _tmp = any([btn.isChecked() for btn in buttons])
+        _ind_ = [btn.text() for btn in buttons if btn.isChecked()]
 
-        self.btnFirstAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
-        self.btnSecondAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
-        self.btnThirdAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
-        self.btnFourAnswer.clicked.connect(lambda: self.is_end(next(gen, False)))
+        dt = next(gen, False)
+        if dt is False:
+            self.__message_with_results(self.count_answers)
+            self.__count_balls(self.answers, self.re)
+            self.close()
+        else:
+            self.answers.append(_ind_)
+        _tmp_ = [btn.setCheckable(False) for btn in buttons if btn.isChecked()]
 
-    def is_end(self, data: bool | dict):
-        self.count_gen_iter.append(0 if data is False else None)
-        match data:
-            case False:
-                self.__message_with_results(self.count_answers)
-                self.close()
-            case _:
-                if self.btnFirstAnswer.isChecked():
-                    self.count_answers.append(data.get("answers")[0].get("mass"))
-                    self.btnFirstAnswer.setChecked(False)
+    def __count_balls(self, answers: list):
 
-                if self.btnSecondAnswer.isChecked():
-                    self.count_answers.append(data.get("answers")[1].get("mass"))
-                    self.btnSecondAnswer.setChecked(False)
-
-                if self.btnThirdAnswer.isChecked():
-                    self.count_answers.append(data.get("answers")[2].get("mass"))
-                    self.btnThirdAnswer.setChecked(False)
-
-                if self.btnFourAnswer.isChecked():
-                    self.count_answers.append(data.get("answers")[3].get("mass"))
-                    self.btnFourAnswer.setChecked(False)
+        ...
 
     def __message_with_results(self, answers: list[bool]):
         msg = QtWidgets.QMessageBox(self)
@@ -66,6 +56,7 @@ class Tests(QtWidgets.QWidget, testsWindow.Ui_Form):
         btn_continue = msg.addButton("Продолжить выполнять тесты", QtWidgets.QMessageBox.ButtonRole.NoRole)
         msg.setDefaultButton(btn_continue)
         msg.exec()
+        print(self.answers)
 
 
 class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
@@ -117,6 +108,10 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
 
     def __add_to_test(self, default_data: dict[str, list], count_q: int = 0):
         dt = default_data.get("response")
+        print(self.rbtnFirstTrue.isChecked(), self.rbtnSecondTrue.isChecked(),
+              self.rbtnThirdTrue.isChecked(), self.rbtnFourTrue.isChecked())
+        print(self.ledtAnswerFirst.text(), self.ledtAnswerSecond.text(),
+              self.ledtAnswerThird.text(), self.ledtAnswerFour.text())
         q = {
             "question": count_q,
             "text": self.ledtTextQuestion.text(),
