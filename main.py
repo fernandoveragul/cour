@@ -91,14 +91,11 @@ class Application(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.btnFinish.clicked.connect(lambda: self.create_test(self._tmp))
 
         for ind, btn in enumerate(get_filtered_list_files()):
-            print(btn)
             btn_: QPushButton = QtWidgets.QPushButton()
             btn_.setText(btn.upper())
             btn_.setObjectName(f"BTN_{btn.split()[-1]}")
-            btn_.clicked.connect(lambda ch, bt=btn: self.__open_test(bt))  # self.__open_test(self.questions)
+            btn_.clicked.connect(lambda ch, bt=btn: self.__open_test(bt))
             self.verticalLayout_3.addWidget(btn_)
-
-        # for ind, q in self.questions :=
 
     def __open_test(self, btn: str):
         path_to_questions = f'{btn.replace(" ", "_")}'

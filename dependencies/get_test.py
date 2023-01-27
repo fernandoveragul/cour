@@ -34,7 +34,6 @@ def get_json_tests_to_python(file_name: str) -> dict | None:
 
 def post_python_to_json_test(write_data: list, number_var: str):
     path_to_write: str = get_path("tests")
-    print(write_data)
     nv = get_last_test_name()
     with open(f"{path_to_write}Вариант_{number_var if number_var else nv}.json", "w") as file:
         file.write(json.dumps(write_data, indent=4))
